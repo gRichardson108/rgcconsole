@@ -37,12 +37,18 @@ namespace rgcconsole
             character.Profession = profession.Name;
             int remainingPoints = pointTotal;
 
-            List<KeyValuePair<AttributeType, float>> attrWeights = 
-                new List<KeyValuePair<AttributeType, float>>(profession.PrimaryAttributeWeights.ToList());
+            List<KeyValuePair<AttributeType, float>> attrWeights =
+               new List<KeyValuePair<AttributeType, float>>(profession.PrimaryAttributeWeights.ToList());
             attrWeights.AddRange(profession.SecondaryAttributeWeights.ToList());
-            foreach ( (AttributeType type, float weight) in attrWeights)
+            foreach ((AttributeType type, float weight) in attrWeights)
             {
                 CharacterAttribute attr = type.GetCharacterAttribute(character);
+
+                // update secondary attributes since they are based on primaries
+                if (attr is SecondaryAttribute)
+                {
+                    (attr as SecondaryAttribute).Recalculate(character);
+                }
 
                 // do a little randomization for flavor so we occasionally get something
                 // different from the template

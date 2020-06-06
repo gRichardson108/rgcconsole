@@ -13,6 +13,8 @@ namespace rgcconsole
         public string Description { get; set; }
         public int CostPerLevel { get; set; }
 
+        public float ChangePerLevel { get; set; } = 1.0f;
+
         public delegate CharacterAttribute AttributeFetcherMethod(Character character);
 
         public AttributeFetcherMethod GetCharacterAttribute { get; set; }
@@ -25,7 +27,7 @@ namespace rgcconsole
         public static AttributeType Will = new AttributeType() { Name = "Will", Description = "", CostPerLevel = 5 , GetCharacterAttribute = (c => c.Will) };
         public static AttributeType Perception = new AttributeType() { Name = "Perception", Description = "", CostPerLevel = 5, GetCharacterAttribute = (c => c.Perception) };
         public static AttributeType FatiguePoints = new AttributeType() { Name = "Fatigue Points", Description = "", CostPerLevel = 3, GetCharacterAttribute = (c => c.FatiguePoints) };
-        public static AttributeType BasicSpeed = new AttributeType() { Name = "Basic Speed", Description = "", CostPerLevel = 5, GetCharacterAttribute = (c => c.BasicSpeed) };
+        public static AttributeType BasicSpeed = new AttributeType() { Name = "Basic Speed", Description = "", CostPerLevel = 5, ChangePerLevel = 0.25f, GetCharacterAttribute = (c => c.BasicSpeed) };
         public static AttributeType Dodge = new AttributeType() { Name = "Dodge", Description = "", CostPerLevel = 15, GetCharacterAttribute = (c => c.Dodge) };
         public static AttributeType BasicMove = new AttributeType() { Name = "Basic Move", Description = "", CostPerLevel = 5, GetCharacterAttribute = (c => c.BasicMove) };
     }
@@ -59,7 +61,7 @@ namespace rgcconsole
             int levelsBought = pointsToSpend / AttributeType.CostPerLevel;
             uselesslySpentPoints = pointsToSpend % AttributeType.CostPerLevel;
             PointsSpent += (pointsToSpend - uselesslySpentPoints);
-            Value += levelsBought;
+            Value += levelsBought * AttributeType.ChangePerLevel;
         }
 
         public CharacterAttribute(AttributeType attributeType)
@@ -82,6 +84,10 @@ namespace rgcconsole
         public Character Character { get; set; }
 
         private CalculateFromBaseAttribute _recalculate;
+        public void Recalculate(Character character)
+        {
+            Value = _recalculate(character);
+        }
 
         public SecondaryAttribute(AttributeType attributeType, CalculateFromBaseAttribute calcMethod) : base(attributeType)
         {
@@ -132,6 +138,11 @@ namespace rgcconsole
                 Dodge,
                 BasicMove,
             };
+            foreach (SecondaryAttribute attr in secondaryAttributes)
+            {
+                // update secondaries based on default vals for primaries
+                attr.Recalculate(this);
+            }
         }
 
         public List<Trait> Traits { get; } = new List<Trait>();
@@ -141,17 +152,22 @@ namespace rgcconsole
     /// <summary>
     /// Advantages and Disadvantages are collectively called "Traits".
     /// </summary>
-    public abstract class Trait
+    public class Trait
     {
         public string Name { get; set; }
 
+        public string Brief { get; set; }
         public string Description { get; set; }
+
+        public bool Leveled { get; set; } = false;
+
         /// <summary>
         /// Point cost of the trait. Can be negative for disadvantages.
         /// </summary>
         public int PointValue { get; set; }
 
         public delegate bool Applicator(Character character);
+        public Applicator ApplyToCharacter { get; set; }
     }
 
     public abstract class Skill
