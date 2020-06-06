@@ -37,6 +37,7 @@ namespace rgcconsole
             character.Profession = profession.Name;
             int remainingPoints = pointTotal;
 
+            // randomize the primary/secondary attributes
             List<KeyValuePair<AttributeType, float>> attrWeights =
                new List<KeyValuePair<AttributeType, float>>(profession.PrimaryAttributeWeights.ToList());
             attrWeights.AddRange(profession.SecondaryAttributeWeights.ToList());
@@ -52,11 +53,50 @@ namespace rgcconsole
 
                 // do a little randomization for flavor so we occasionally get something
                 // different from the template
-                Normal normalDist = new Normal(weight, .03);
+                Normal normalDist = new Normal(weight, 0.03, random);
                 int pointsToSpend = (int) Math.Floor(normalDist.Sample() * pointTotal);
                 
                 attr.SpendPoints(pointsToSpend, out int extra);
                 remainingPoints -= (pointsToSpend - extra);
+            }
+
+            // buy mandatory traits
+            foreach (Trait t in profession.MandatoryTraits)
+            {
+                Trait toAdd = t; // copies since Traits are value-typed
+                toAdd.Level += 1;
+                remainingPoints -= toAdd.PointValue;
+                character.Traits.Add(toAdd);
+            }
+
+            // randomize the advantages
+            List<KeyValuePair<Trait, float>> traitWeights = 
+                new List<KeyValuePair<Trait, float>>(profession.AdvantageWeights.ToList());
+            traitWeights.AddRange(profession.DisadvantageWeights.ToList());
+            foreach ((Trait t, float weight) in traitWeights)
+            {
+                Normal normalDist = new Normal(weight, 0.015, random);
+                int pointsToSpend = (int)Math.Floor(normalDist.Sample() * pointTotal);
+                if (pointsToSpend >= t.PointValue)
+                {
+                    Trait toAdd = t;//copy the trait before we modify it
+                    // buy one level
+                    toAdd.Level += 1;
+                    remainingPoints -= t.PointValue;
+                    pointsToSpend -= t.PointValue;
+                    // if it's a leveled trait, buy multiple levels
+                    if (t.Leveled)
+                    {
+                        while (pointsToSpend >= t.PointValue)
+                        {
+                            toAdd.Level += 1;                            
+                            remainingPoints -= t.PointValue;
+                            pointsToSpend -= t.PointValue;
+                        }
+                    }
+                    toAdd.PointValue = t.PointValue * toAdd.Level;
+                    character.Traits.Add(toAdd);
+                }
             }
 
             Console.WriteLine($"Remaining points: {remainingPoints}");

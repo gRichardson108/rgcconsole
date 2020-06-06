@@ -154,12 +154,22 @@ namespace rgcconsole.Fantasy.Professions
 
         public Dictionary<Trait, float> AdvantageWeights { get; set; } = new Dictionary<Trait, float>
         {
-
+            { FantasyAdvantages.RapidHealing, 0.02f },
+            { FantasyAdvantages.Fearless, 0.08f },
+            { FantasyAdvantages.Luck, 0.02f },
+            { FantasyAdvantages.CombatReflexes, 0.03f },
+            { FantasyAdvantages.PenetratingVoice, 0.02f },
+            { FantasyAdvantages.Appearance, 0.02f },
         };
 
         public Dictionary<Trait, float> DisadvantageWeights { get; set; } = new Dictionary<Trait, float>
         {
-
+            { FantasyDisadvantages.SenseOfDutyCompanions, 0.03f },
+            { FantasyDisadvantages.ChivalryHonor, 0.03f },
+            { FantasyDisadvantages.Bloodlust, 0.02f },
+            { FantasyDisadvantages.NoSenseOfHumor, 0.015f },
+            { FantasyDisadvantages.Chummy, 0.02f },
+            { FantasyDisadvantages.Truthfulness, 0.02f },
         };
 
         public Dictionary<FantasyGameSkill, float> SkillWeights { get; set; } = new Dictionary<FantasyGameSkill, float>

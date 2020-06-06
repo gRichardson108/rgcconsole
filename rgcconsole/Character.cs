@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace rgcconsole
@@ -158,16 +159,28 @@ namespace rgcconsole
     /// <summary>
     /// Advantages and Disadvantages are collectively called "Traits".
     /// </summary>
-    public class Trait
+    public struct Trait
     {
         public string Name { get; set; }
 
         public string Brief { get; set; }
         public string Description { get; set; }
 
-        public bool Leveled { get; set; } = false;
+        public bool Leveled { get; set; }
+        public int Level { get; set; }
+        public bool HasSelfControlRoll { get; set; }
 
-        public bool HasSelfControlRoll { get; set; } = false;
+        public Trait(Trait t)
+        {
+            Name = t.Name;
+            Brief = t.Brief;
+            Description = t.Description;
+            Leveled = t.Leveled;
+            Level = t.Level;
+            HasSelfControlRoll = t.HasSelfControlRoll;
+            PointValue = t.PointValue;
+            ApplyToCharacter = t.ApplyToCharacter;
+        }
 
         /// <summary>
         /// Point cost of the trait. Can be negative for disadvantages.
@@ -199,5 +212,13 @@ namespace rgcconsole
         /// vary.
         /// </summary>
         public abstract int EffectiveSkillLevel { get; }
+
+        public void SpendPoints(int pointsToSpend, out int uselesslySpentPoints)
+        {
+            int levelsBought = pointsToSpend / AttributeType.CostPerLevel;
+            uselesslySpentPoints = pointsToSpend % AttributeType.CostPerLevel;
+            PointsSpent += (pointsToSpend - uselesslySpentPoints);
+            Value += levelsBought * AttributeType.ChangePerLevel;
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace rgcconsole.Fantasy.Traits
         public static Trait AbsoluteDirection = new Trait()
         {
             Name = "Absolute Direction",
-            Brief = "",
+            Brief = "You always know which way is north, and you can always retrace any path you've followed in the last month.",
             Description = "",
             PointValue = 5
         };
@@ -33,7 +33,7 @@ namespace rgcconsole.Fantasy.Traits
 
         public static Trait AnimalEmpathy = new Trait()
         {
-            Name = "AnimalEmpathy",
+            Name = "Animal Empathy",
             Brief = "Read animal motivations with an IQ roll. Can use influence skills on animals.",
             Description = "",
             PointValue = 5
@@ -94,7 +94,7 @@ namespace rgcconsole.Fantasy.Traits
         public static Trait Fearless = new Trait()
         {
             Name = "Fearless",
-            Brief = "+1 to Will for Fright Checks or supernatural fear.",
+            Brief = "+1/level to Will for Fright Checks or supernatural fear.",
             Description = "",
             PointValue = 2,
             Leveled = true,
@@ -134,7 +134,7 @@ namespace rgcconsole.Fantasy.Traits
 
         public static Trait MagicResistance = new Trait()
         {
-            Name = "MagicResistance",
+            Name = "Magic Resistance",
             Brief = "-1/level penalty to skill of spellcasters when they use a spell on you. Also +1/level to any roll for resisting magic.",
             Description = "",
             PointValue = 2,

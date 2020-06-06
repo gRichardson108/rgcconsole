@@ -8,9 +8,6 @@ namespace rgcconsole.Fantasy
     {
         public AttributeType BaseAttribute { get; }
 
-        public List<string> Specializations { get; set; }
-        public bool MustSpecialize { get; set; }
-
         public FantasySkillDifficulty Difficulty { get; }
 
         public FantasyGameSkill(AttributeType attribute, FantasySkillDifficulty difficulty)

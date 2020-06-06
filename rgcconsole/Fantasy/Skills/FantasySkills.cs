@@ -48,21 +48,46 @@ namespace rgcconsole.Fantasy.Skills
             Description = "Build, design or maintain machines and other complex structures (like buildings). Can specialize in Architecture, Mechanical, etc." 
         };
 
-        public static FantasyGameSkill Expression = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
-        { 
-            Name = "Expression", 
-            Description = "Any form of art or performance.",
-            MustSpecialize = true,
-            Specializations = new List<string>
-            {
-                "Singing",
-                "Dancing",
-                "Sculpting",
-                "Musical Instrument",
-                "Storytelling",
-                "Puppetry",
-                "Painting",
-            }
+        public static FantasyGameSkill Singing = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        {
+            Name = "Singing",
+            Description = "",
+        };
+
+        public static FantasyGameSkill Dancing = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        {
+            Name = "Dancing",
+            Description = "",
+        };
+
+        public static FantasyGameSkill Sculpting = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        {
+            Name = "Sculpting",
+            Description = "",
+        };
+
+        public static FantasyGameSkill Music = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        {
+            Name = "Musical Instrument",
+            Description = "",
+        };
+
+        public static FantasyGameSkill Storytelling = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        {
+            Name = "Storytelling",
+            Description = "",
+        };
+
+        public static FantasyGameSkill Puppetry = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        {
+            Name = "Puppetry",
+            Description = "",
+        };
+
+        public static FantasyGameSkill Painting = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        {
+            Name = "Painting",
+            Description = "",
         };
 
         public static FantasyGameSkill Humanities = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Broad)
@@ -113,19 +138,34 @@ namespace rgcconsole.Fantasy.Skills
             Description = "Understanding other people." 
         };
 
-        public static FantasyGameSkill Science = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        public static FantasyGameSkill ScienceAlchemy = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Broad)
         { 
-            Name = "Science", 
-            Description = "Knowledge of physical sciences.",
-            MustSpecialize = true,
-            Specializations = new List<string>
-            {
-                "Nature",
-                "Mathematics",
-                "Geography",
-                "Geology",
-                "Astronomy",
-            }
+            Name = "Science (Alchemy)", 
+            Description = "Knowledge of Alchemy.",
+        };
+
+        public static FantasyGameSkill ScienceMathematics = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Broad)
+        {
+            Name = "Science (Mathematics)",
+            Description = "Knowledge of Mathematics.",
+        };
+
+        public static FantasyGameSkill ScienceAstronomy = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Broad)
+        {
+            Name = "Science (Astronomy)",
+            Description = "Knowledge of Astronomy.",
+        };
+
+        public static FantasyGameSkill ScienceNature = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Broad)
+        {
+            Name = "Science (Nature)",
+            Description = "Knowledge of Astronomy.",
+        };
+
+        public static FantasyGameSkill ScienceGeology = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Broad)
+        {
+            Name = "Science (Geology)",
+            Description = "Knowledge of Geology.",
         };
 
         public static FantasyGameSkill Stealth = new FantasyGameSkill(AttributeType.DX, FantasyGameSkill.FantasySkillDifficulty.Broad)
@@ -158,17 +198,10 @@ namespace rgcconsole.Fantasy.Skills
             Description = "Confuse, deceive and distract people." 
         };
 
-        public static FantasyGameSkill Vehicle = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Specialized)
+        public static FantasyGameSkill Vehicle = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Broad)
         { 
             Name = "Vehicle",
-            Description = "Control vehicles.", 
-            MustSpecialize = true, 
-            Specializations = new List<string>
-            {
-                "Horse",
-                "Boat",
-                "Mechanical"
-            } 
+            Description = "Control vehicles.",
         };
     }
 }
