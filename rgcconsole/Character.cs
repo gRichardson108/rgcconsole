@@ -48,6 +48,12 @@ namespace rgcconsole
                 ValueChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        /// <summary>
+        /// bonus increases to the attribute that don't cost additional points
+        /// example: combat reflexes increases Dodge
+        /// </summary>
+        public virtual float Bonus { get; set; }
         public int PointsSpent { get; private set; }
 
         /// <summary>
@@ -161,12 +167,14 @@ namespace rgcconsole
 
         public bool Leveled { get; set; } = false;
 
+        public bool HasSelfControlRoll { get; set; } = false;
+
         /// <summary>
         /// Point cost of the trait. Can be negative for disadvantages.
         /// </summary>
         public int PointValue { get; set; }
 
-        public delegate bool Applicator(Character character);
+        public delegate void Applicator(Character character);
         public Applicator ApplyToCharacter { get; set; }
     }
 

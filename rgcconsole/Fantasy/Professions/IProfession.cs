@@ -14,9 +14,11 @@ namespace rgcconsole.Fantasy.Professions
         public Dictionary<AttributeType, float> PrimaryAttributeWeights { get; set; }
         public Dictionary<AttributeType, float> SecondaryAttributeWeights { get; set; }
 
+        public List<Trait> MandatoryTraits { get; set; }
         public Dictionary<Trait, float> AdvantageWeights { get; set; }
         public Dictionary<Trait, float> DisadvantageWeights { get; set; }
 
+        public List<FantasyGameSkill> MandatorySkill { get; set; }
         public Dictionary<FantasyGameSkill, float> SkillWeights { get; set; }
         public Dictionary<FantasyGameSpell, float> SpellWeights { get; set; }
     }

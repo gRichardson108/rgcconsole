@@ -4,7 +4,7 @@ using System.Text;
 
 namespace rgcconsole.Fantasy.Skills
 {
-    class FantasySkills
+    public class FantasySkills
     {
         public static FantasyGameSkill Academia = new FantasyGameSkill(AttributeType.IQ, FantasyGameSkill.FantasySkillDifficulty.Broad)
         { 
