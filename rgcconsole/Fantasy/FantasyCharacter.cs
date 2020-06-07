@@ -6,7 +6,6 @@ namespace rgcconsole.Fantasy
 {
     public class FantasyGameSkill : Skill
     {
-        public AttributeType BaseAttribute { get; }
 
         public FantasySkillDifficulty Difficulty { get; }
 
@@ -16,15 +15,13 @@ namespace rgcconsole.Fantasy
             Difficulty = difficulty;
         }
 
-        public override int EffectiveSkillLevel => throw new NotImplementedException();
-
         /// <summary>
         /// My fantasy skills are simplified, we're going to use "Very Hard" costs for the
         /// broadest skills, and "Average" for the specialized skills.
         /// </summary>
         /// <param name="EffectiveSkillLevel"></param>
         /// <returns></returns>
-        public override int CalculatePointCost(int EffectiveSkillLevel)
+        public override void SpendPoints(int pointsToSpend, out int uselesslySpentPoints)
         {
             int offset = 0; // higher offset shifts the skill costs to make them more difficult
 
@@ -34,24 +31,33 @@ namespace rgcconsole.Fantasy
             }
             int skillMinimum = -(offset + 1);
 
-            if (EffectiveSkillLevel < skillMinimum)
+            while (pointsToSpend > 0)
             {
-                throw new ArgumentOutOfRangeException($"Effective skill {EffectiveSkillLevel} is below the skill minimum of {skillMinimum}");
-            } else if (EffectiveSkillLevel == skillMinimum)
-            {
-                return 1;
-            } else if (EffectiveSkillLevel == skillMinimum + 1)
-            {
-                return 2;
-            } else
-            {
-                return (EffectiveSkillLevel + offset) * 4;
+                if (CurrentSkillLevel < skillMinimum && pointsToSpend >= 1)
+                {
+                    pointsToSpend -= 1;
+                    PointsSpent += 1;
+                    CurrentSkillLevel = skillMinimum;
+                }
+                else if (CurrentSkillLevel == skillMinimum && pointsToSpend >= 2)
+                {
+                    pointsToSpend -= 2;
+                    PointsSpent += 2;
+                    CurrentSkillLevel = skillMinimum + 1;
+                }
+                else if (pointsToSpend >= 4)
+                {
+                    pointsToSpend -= 4;
+                    PointsSpent += 4;
+                    CurrentSkillLevel += 1;
+                }
+                else
+                {
+                    uselesslySpentPoints = pointsToSpend;
+                    return;
+                }
             }
-        }
-
-        public override int PointCost()
-        {
-            return CalculatePointCost(CurrentSkillLevel);
+            uselesslySpentPoints = 0;
         }
 
         public enum FantasySkillDifficulty
@@ -73,9 +79,7 @@ namespace rgcconsole.Fantasy
             Difficulty = difficulty;
         }
 
-        public override int EffectiveSkillLevel => throw new NotImplementedException();
-
-        public override int CalculatePointCost(int EffectiveSkillLevel)
+        public override void SpendPoints(int pointsToSpend, out int uselesslySpentPoints)
         {
             int offset = 1; // higher offset shifts the skill costs to make them more difficult
 
@@ -85,27 +89,34 @@ namespace rgcconsole.Fantasy
             }
             int skillMinimum = -(offset + 1);
 
-            if (EffectiveSkillLevel < skillMinimum)
+            while (pointsToSpend > 0)
             {
-                throw new ArgumentOutOfRangeException($"Effective skill {EffectiveSkillLevel} is below the skill minimum of {skillMinimum}");
+                if (CurrentSkillLevel < skillMinimum && pointsToSpend >= 1)
+                {
+                    pointsToSpend -= 1;
+                    PointsSpent += 1;
+                    CurrentSkillLevel = skillMinimum;
+                }
+                else if (CurrentSkillLevel == skillMinimum && pointsToSpend >= 2)
+                {
+                    pointsToSpend -= 2;
+                    PointsSpent += 2;
+                    CurrentSkillLevel = skillMinimum + 1;
+                }
+                else if (pointsToSpend >= 4)
+                {
+                    pointsToSpend -= 4;
+                    PointsSpent += 4;
+                    CurrentSkillLevel += 1;
+                }
+                else
+                {
+                    // not enough point to get to next level
+                    uselesslySpentPoints = pointsToSpend;
+                    return;
+                }
             }
-            else if (EffectiveSkillLevel == skillMinimum)
-            {
-                return 1;
-            }
-            else if (EffectiveSkillLevel == skillMinimum + 1)
-            {
-                return 2;
-            }
-            else
-            {
-                return (EffectiveSkillLevel + offset) * 4;
-            }
-        }
-
-        public override int PointCost()
-        {
-            throw new NotImplementedException();
+            uselesslySpentPoints = 0;
         }
 
         public enum FantasySpellDifficulty

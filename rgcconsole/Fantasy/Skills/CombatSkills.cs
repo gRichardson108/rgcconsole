@@ -18,7 +18,7 @@ namespace rgcconsole.Fantasy.Skills
             Description = "Various knives, swords, axes, spears, glaives.",
         };
 
-        public static FantasyGameSkill BluntWeapons = new FantasyGameSkill(AttributeType.DX, FantasyGameSkill.FantasySkillDifficulty.Broad)
+        public static FantasyGameSkill BluntWeapon = new FantasyGameSkill(AttributeType.DX, FantasyGameSkill.FantasySkillDifficulty.Broad)
         {
             Name = "Blunt Weapons",
             Description = "Clubs, flails, morning stars, nunchucks.",

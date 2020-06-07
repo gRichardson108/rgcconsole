@@ -11,6 +11,7 @@ namespace rgcconsole
     public class AttributeType
     {
         public string Name { get; set; }
+        public string Abbreviation { get; set; }
         public string Description { get; set; }
         public int CostPerLevel { get; set; }
 
@@ -20,17 +21,17 @@ namespace rgcconsole
 
         public AttributeFetcherMethod GetCharacterAttribute { get; set; }
 
-        public static AttributeType ST = new AttributeType() { Name = "Strength", Description = "", CostPerLevel = 10, GetCharacterAttribute = (c=>c.Strength) };
-        public static AttributeType DX = new AttributeType() { Name = "Dexterity", Description = "", CostPerLevel = 20, GetCharacterAttribute = (c => c.Dexterity) };
-        public static AttributeType IQ = new AttributeType() { Name = "Intelligence", Description = "", CostPerLevel = 20, GetCharacterAttribute = (c => c.Intelligence) };
-        public static AttributeType HT = new AttributeType() { Name = "Health", Description = "", CostPerLevel = 10, GetCharacterAttribute = (c => c.Health) };
-        public static AttributeType HitPoints = new AttributeType() { Name = "Hit Points", Description = "", CostPerLevel = 2, GetCharacterAttribute = (c => c.HitPoints) };
-        public static AttributeType Will = new AttributeType() { Name = "Will", Description = "", CostPerLevel = 5 , GetCharacterAttribute = (c => c.Will) };
-        public static AttributeType Perception = new AttributeType() { Name = "Perception", Description = "", CostPerLevel = 5, GetCharacterAttribute = (c => c.Perception) };
-        public static AttributeType FatiguePoints = new AttributeType() { Name = "Fatigue Points", Description = "", CostPerLevel = 3, GetCharacterAttribute = (c => c.FatiguePoints) };
-        public static AttributeType BasicSpeed = new AttributeType() { Name = "Basic Speed", Description = "", CostPerLevel = 5, ChangePerLevel = 0.25f, GetCharacterAttribute = (c => c.BasicSpeed) };
-        public static AttributeType Dodge = new AttributeType() { Name = "Dodge", Description = "", CostPerLevel = 15, GetCharacterAttribute = (c => c.Dodge) };
-        public static AttributeType BasicMove = new AttributeType() { Name = "Basic Move", Description = "", CostPerLevel = 5, GetCharacterAttribute = (c => c.BasicMove) };
+        public static AttributeType ST = new AttributeType() { Name = "Strength", Abbreviation = "ST", Description = "", CostPerLevel = 10, GetCharacterAttribute = (c=>c.Strength) };
+        public static AttributeType DX = new AttributeType() { Name = "Dexterity", Abbreviation = "DX", Description = "", CostPerLevel = 20, GetCharacterAttribute = (c => c.Dexterity) };
+        public static AttributeType IQ = new AttributeType() { Name = "Intelligence", Abbreviation = "IQ", Description = "", CostPerLevel = 20, GetCharacterAttribute = (c => c.Intelligence) };
+        public static AttributeType HT = new AttributeType() { Name = "Health", Abbreviation = "HT", Description = "", CostPerLevel = 10, GetCharacterAttribute = (c => c.Health) };
+        public static AttributeType HitPoints = new AttributeType() { Name = "Hit Points", Abbreviation = "HP", Description = "", CostPerLevel = 2, GetCharacterAttribute = (c => c.HitPoints) };
+        public static AttributeType Will = new AttributeType() { Name = "Will", Abbreviation = "Will", Description = "", CostPerLevel = 5 , GetCharacterAttribute = (c => c.Will) };
+        public static AttributeType Perception = new AttributeType() { Name = "Perception", Abbreviation = "Per", Description = "", CostPerLevel = 5, GetCharacterAttribute = (c => c.Perception) };
+        public static AttributeType FatiguePoints = new AttributeType() { Name = "Fatigue Points", Abbreviation = "FP", Description = "", CostPerLevel = 3, GetCharacterAttribute = (c => c.FatiguePoints) };
+        public static AttributeType BasicSpeed = new AttributeType() { Name = "Basic Speed", Abbreviation = "BS", Description = "", CostPerLevel = 5, ChangePerLevel = 0.25f, GetCharacterAttribute = (c => c.BasicSpeed) };
+        public static AttributeType Dodge = new AttributeType() { Name = "Dodge", Abbreviation = "Dodge", Description = "", CostPerLevel = 15, GetCharacterAttribute = (c => c.Dodge) };
+        public static AttributeType BasicMove = new AttributeType() { Name = "Basic Move", Abbreviation = "BM", Description = "", CostPerLevel = 5, GetCharacterAttribute = (c => c.BasicMove) };
     }
 
     public abstract class CharacterAttribute
@@ -108,6 +109,13 @@ namespace rgcconsole
         public string Name { get; set; }
         public string Profession { get; set; }
         public string Gender { get; set; }
+
+        public int RemainingPoints { get; set; }
+
+        /// <summary>
+        /// Height in inches.
+        /// </summary>
+        public int Height { get; set; }
 
         public PrimaryAttribute Strength { get; set; } = new PrimaryAttribute(AttributeType.ST, 10f);
         public PrimaryAttribute Dexterity { get; set; } = new PrimaryAttribute(AttributeType.DX, 10f);
@@ -195,30 +203,15 @@ namespace rgcconsole
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public AttributeType BaseAttribute { get; protected set; }
 
         /// <summary>
-        /// The number of skill levels invested. Not the same
-        /// as the number of character points invested.
+        /// The roll relative to the base attribute of the skill.
         /// </summary>
-        public int CurrentSkillLevel { get; set; }
+        public int CurrentSkillLevel { get; set; } = -6; // default for unlearned skill
 
-        public abstract int PointCost();
-        public abstract int CalculatePointCost(int EffectiveSkillLevel);
+        public int PointsSpent { get; protected set; } = 0;
 
-        /// <summary>
-        /// The target number for a success when rolling this skill.
-        /// This is generally based on some stat, like DX or IQ, and
-        /// modified by the CurrentSkillLevel, but some skills
-        /// vary.
-        /// </summary>
-        public abstract int EffectiveSkillLevel { get; }
-
-        public void SpendPoints(int pointsToSpend, out int uselesslySpentPoints)
-        {
-            int levelsBought = pointsToSpend / AttributeType.CostPerLevel;
-            uselesslySpentPoints = pointsToSpend % AttributeType.CostPerLevel;
-            PointsSpent += (pointsToSpend - uselesslySpentPoints);
-            Value += levelsBought * AttributeType.ChangePerLevel;
-        }
+        public abstract void SpendPoints(int pointsToSpend, out int uselesslySpentPoints);
     }
 }

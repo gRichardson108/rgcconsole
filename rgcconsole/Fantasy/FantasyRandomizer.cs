@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MathNet.Numerics.Distributions;
+using System.Drawing;
 
 namespace rgcconsole
 {
@@ -16,6 +17,8 @@ namespace rgcconsole
             new Barbarian(),
             new Scout(),
             new Knight(),
+            new Thief(),
+            new HolyWarrior(),
         };
 
         public static Character GenerateRandomCharacter(int pointTotal, out int randomSeed)
@@ -99,7 +102,111 @@ namespace rgcconsole
                 }
             }
 
-            Console.WriteLine($"Remaining points: {remainingPoints}");
+            // randomize the skills
+            List<KeyValuePair<FantasyGameSkill, float>> skillWeights = new List<KeyValuePair<FantasyGameSkill, float>>(profession.SkillWeights.ToList());
+            foreach ((FantasyGameSkill skill, float weight) in skillWeights)
+            {
+                Normal normalDist = new Normal(weight, 0.004, random);
+                int pointsToSpend = (int)Math.Floor(normalDist.Sample() * pointTotal);
+                // skip negative or 0 point value skills
+                if (pointsToSpend < 1)
+                {
+                    continue;
+                }
+
+                FantasyGameSkill mySkill = new FantasyGameSkill(skill.BaseAttribute, skill.Difficulty)
+                {
+                    Name = skill.Name,
+                    Description = skill.Description,
+                };
+                // don't attempt to spend more points than we have left
+                if (pointsToSpend > remainingPoints)
+                {
+                    pointsToSpend = remainingPoints;
+                }
+
+                mySkill.SpendPoints(pointsToSpend, out int extra);
+                remainingPoints -= (pointsToSpend - extra);
+
+                character.Skills.Add(mySkill);
+
+                if (remainingPoints == 0)
+                {
+                    // stop here if we've spent exactly as many as we can
+                    break;
+                }
+            }
+
+            // what to do with leftover points?
+            if (remainingPoints > 0)
+            {
+                // improve low skills
+                var lowSkills = from s in character.Skills
+                                where s.PointsSpent < (skillWeights.Find(m => m.Key.Name == s.Name).Value * pointTotal * 1.02f)
+                                orderby (random.Next()) // shuffle list
+                                select s;
+                foreach (FantasyGameSkill skill in lowSkills)
+                {
+                    if (remainingPoints >= 4)
+                    {
+                        skill.SpendPoints(4, out int uselessPoints);
+                        remainingPoints -= (4 - uselessPoints);
+                    } else
+                    {
+                        break;
+                    }
+                }
+
+                var professionAdv = from s in traitWeights
+                                    where s.Key.PointValue > 0 && s.Key.PointValue <= remainingPoints
+                                    where character.Traits.Find(m=> m.Name == s.Key.Name).Name == "" //find missing trait
+                                    orderby (random.Next())
+                                    select s.Key;
+                foreach (Trait t in professionAdv)
+                {
+                    if (remainingPoints >= t.PointValue)
+                    {
+                        Trait toAdd = t;// copy the trait before we modify it
+                                        // buy one level
+                        toAdd.Level += 1;
+                        remainingPoints -= t.PointValue;
+                        // if it's a leveled trait, buy multiple levels
+                        if (t.Leveled)
+                        {
+                            // buy up to 3 levels
+                            int i = 0;
+                            while (remainingPoints >= t.PointValue && i++ < 3)
+                            {
+                                toAdd.Level += 1;
+                                remainingPoints -= t.PointValue;
+                            }
+                        }
+                        toAdd.PointValue = t.PointValue * toAdd.Level;
+                        character.Traits.Add(toAdd);
+                    }
+                }
+            }
+
+
+            var genderNormal = new Normal(random);
+            var sample = genderNormal.Sample();
+            Normal heightNormal;
+            if (sample > 0.01)
+            {
+                character.Gender = "Male";
+                heightNormal = new Normal(70, 3, random);
+            } else if (sample < -0.011)
+            {
+                character.Gender = "Female";
+                heightNormal = new Normal(64, 3, random);
+            } else
+            {
+                character.Gender = "Nonbinary";
+                heightNormal = new Normal(67.5, 3, random);
+            }
+
+            character.Height = (int) Math.Round(heightNormal.Sample());
+            character.RemainingPoints = remainingPoints;
             return character;
         }
     }
