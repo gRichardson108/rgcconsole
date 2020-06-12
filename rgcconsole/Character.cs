@@ -1,7 +1,10 @@
-﻿using System;
+﻿using rgcconsole.Fantasy.Professions;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace rgcconsole
 {
@@ -107,9 +110,10 @@ namespace rgcconsole
     public class Character
     {
         public string Name { get; set; }
-        public string Profession { get; set; }
+        public IProfession Profession { get; set; }
         public string Gender { get; set; }
 
+        [Display(Name="Remaining")]
         public int RemainingPoints { get; set; }
 
         /// <summary>
@@ -129,7 +133,7 @@ namespace rgcconsole
         public SecondaryAttribute BasicSpeed { get; set; } = new SecondaryAttribute(AttributeType.BasicSpeed, ch => (ch.Health.Value + ch.Dexterity.Value) / 4.0f);
         public SecondaryAttribute Dodge { get; set; } = new SecondaryAttribute(AttributeType.Dodge, ch => (float) Math.Floor(ch.BasicSpeed.Value + 3.0f));
         public SecondaryAttribute BasicMove { get; set; } = new SecondaryAttribute(AttributeType.BasicMove, ch => (float)Math.Floor(ch.BasicSpeed.Value));
-
+        
         public readonly List<PrimaryAttribute> primaryAttributes;
         public readonly List<SecondaryAttribute> secondaryAttributes;
 

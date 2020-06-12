@@ -8,6 +8,7 @@ namespace rgcconsole
 {
     public static class TextCharacterPrinter
     {
+        const int TEXT_WRAP_LENGTH = 100;
         public static void PrintCharacter(Character character, StreamWriter writer=null)
         {
             if (writer == null)
@@ -16,7 +17,7 @@ namespace rgcconsole
                 writer.AutoFlush = true;
                 Console.SetOut(writer);
             }
-            writer.WriteLine($"Profession: {character.Profession}    Remaining Points: {character.RemainingPoints}");
+            writer.WriteLine($"Profession: {character.Profession.Name}    Remaining Points: {character.RemainingPoints}");
 
             int feet = character.Height / 12;
             int inches = character.Height % 12;
@@ -26,6 +27,7 @@ namespace rgcconsole
 
             writer.WriteLine();
             writer.WriteLine("-----ATTRIBUTES-----");
+            writer.WriteLine("NAME".PadRight(20) + "LVL".PadRight(5) + "POINTS");
             foreach (PrimaryAttribute p in character.primaryAttributes)
             {
                 string label = $"{p.AttributeType.Name} ({p.AttributeType.Abbreviation})".PadRight(20);
@@ -56,7 +58,7 @@ namespace rgcconsole
                 {
                     writer.WriteLine($"{adv.Name} [{adv.PointValue}]");
                 }
-                WriteLineWordWrap(writer, adv.Brief, 80);
+                WriteLineWordWrap(writer, adv.Brief, TEXT_WRAP_LENGTH);
             }
             writer.WriteLine();
             writer.WriteLine("-----DISADVANTAGES-----");
@@ -79,7 +81,7 @@ namespace rgcconsole
                     // TODO - these should be randomized as well!
                     writer.WriteLine($"\tControl Roll (CR): 12");
                 }
-                WriteLineWordWrap(writer, disad.Brief, 80);
+                WriteLineWordWrap(writer, disad.Brief, TEXT_WRAP_LENGTH);
             }
             writer.WriteLine();
             writer.WriteLine("-----SKILLS------------");
@@ -92,8 +94,17 @@ namespace rgcconsole
             const string POINTS_LABEL = "POINTS";
 
             writer.WriteLine(NAME_LABEL + LEVEL_LABEL + RELATIVE_LABEL + POINTS_LABEL);
-            foreach (Skill s in skills)
+            var allSkills = from s in character.Profession.SkillWeights.Keys
+                            orderby s.Name
+                            select s;
+            foreach (Skill a in allSkills)
             {
+                Skill match = character.Skills.Find(m => m.Name == a.Name);
+                Skill s = a;
+                if (match != null)
+                {
+                    s = match;
+                }
                 string name = s.Name.PadRight(NAME_LABEL.Length, ' ');
                 int effectiveLevelNum = (int)s.BaseAttribute.GetCharacterAttribute(character).Value + s.CurrentSkillLevel;
                 string effectiveLevel = $"{effectiveLevelNum}".PadRight(LEVEL_LABEL.Length, ' ');

@@ -1,0 +1,281 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h1>Random GURPS Fantasy Character</h1>
+
+<p>This page randomly generates GURPS characters for fantasy games. Character templates are based off GURPS Dungeon fantasy, except using the cut-down skill list presented <a href="http://eidolog.com/simplified-gurps-chargen.html">here</a>.</p>
+
+<form>
+    <p>
+        Point Limit: <input type="number" asp-for="PointLimit" />
+        Random Seed: <input type="number" asp-for="Seed" />
+        <input type="submit" value="Generate" />
+    </p>
+</form>
+
+<hr />
+
+<div class="container">
+    <h4>Profession: @Model.Character.Profession.Name</h4>
+    <dl class="row">
+        <dt class="col-xs-2">
+            Remaining Points
+        </dt>
+        <dd class="col-xs-2">
+            @Model.Character.RemainingPoints
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-xs-2">
+            Height
+        </dt>
+        <dd class="col-xs-2">
+            @(Model.Character.Height / 12)'@(Model.Character.Height % 12)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-xs-2">Gender</dt>
+        <dd class="col-xs-2">
+            @(Model.Character.Gender)
+        </dd>
+    </dl>
+</div>
+<div class="container">
+    <h4>Attributes</h4>
+    <div class="col-xs-6">
+        <h5>Primary</h5>
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Attribute
+                        </th>
+                        <th>
+                            Value
+                        </th>
+                        <th>
+                            Points Spent
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var primary in Model.Character.primaryAttributes)
+                    {
+                        <tr>
+                            <td>@primary.AttributeType.Name (@primary.AttributeType.Abbreviation)</td>
+                            <td>@primary.Value</td>
+                            <td>[@primary.PointsSpent]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <h5>Seconday</h5>
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Attribute
+                        </th>
+                        <th>
+                            Value
+                        </th>
+                        <th>
+                            Points Spent
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var secondary in Model.Character.secondaryAttributes)
+                    {
+                        <tr>
+                            <td>@secondary.AttributeType.Name</td>
+                            <td>@secondary.Value</td>
+                            <td>[@secondary.PointsSpent]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h4>Advantages</h4>
+    @{
+        var advantages = from t in Model.Character.Traits
+                         where t.PointValue >= 0
+                         orderby t.Name
+                         select t;
+    }
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Traits[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Traits[0].Level)
+                </th>
+                <th>
+                    Control Roll
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Traits[0].PointValue)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Traits[0].Brief)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var trait in advantages)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(t => trait.Name)
+                    </td>
+
+                    @if (trait.Leveled)
+                    {
+                        <td>@Html.DisplayFor(t => trait.Level)</td>
+                    }
+                    else
+                    {
+                        <td>N/A</td>
+                    }
+                    @if (trait.HasSelfControlRoll)
+                    {
+                        <td>CR 12</td>
+                    }
+                    else
+                    {
+                        <td>N/A</td>
+                    }
+
+                    <td>
+                        [@Html.DisplayFor(t => trait.PointValue)]
+                    </td>
+                    <td>
+                        @Html.DisplayFor(t => trait.Brief)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h4>Disadvantages</h4>
+    @{
+        var disadvantages = from t in Model.Character.Traits
+                            where t.PointValue < 0
+                            orderby t.Name
+                            select t;
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Traits[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Traits[0].Level)
+                </th>
+                <th>
+                    Control Roll
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Traits[0].PointValue)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Traits[0].Brief)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var trait in disadvantages)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(t => trait.Name)
+                    </td>
+
+                    @if (trait.Leveled)
+                    {
+                        <td>@Html.DisplayFor(t => trait.Level)</td>
+                    }
+                    else
+                    {
+                        <td>N/A</td>
+                    }
+                    @if (trait.HasSelfControlRoll)
+                    {
+                        <td>CR 12</td>
+                    }
+                    else
+                    {
+                        <td>N/A</td>
+                    }
+
+                    <td>
+                        [@Html.DisplayFor(t => trait.PointValue)]
+                    </td>
+                    <td>
+                        @Html.DisplayFor(t => trait.Brief)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h4>Skills</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Skills[0].Name)
+                </th>
+                <th>
+                    Relative Lvl
+                </th>
+                <th>
+                    Effective Lvl
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Skills[0].PointsSpent)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Character.Skills[0].Description)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var skill in (from s in Model.Character.Skills
+                                   orderby s.Name
+                                   select s))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => skill.Name)
+                    </td>
+                    <td>@skill.BaseAttribute.Abbreviation@skill.CurrentSkillLevel.ToString("+0;-#")</td>
+                    <td>@(skill.BaseAttribute.GetCharacterAttribute(Model.Character).Value+skill.CurrentSkillLevel)</td>
+                    <td>
+                        [@Html.DisplayFor(modelItem => skill.PointsSpent)]
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => skill.Description)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
+
+<hr />

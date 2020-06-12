@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using MathNet.Numerics.Distributions;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace rgcconsole
 {
-    class FantasyRandomizer
+    public class FantasyRandomizer
     {
         private static List<IProfession> professions = new List<IProfession>
         {
@@ -37,14 +38,18 @@ namespace rgcconsole
 
             Character character = new Character();
             IProfession profession = professions.PickRandom(random);
-            character.Profession = profession.Name;
+            character.Profession = profession;
             int remainingPoints = pointTotal;
 
             // randomize the primary/secondary attributes
             List<KeyValuePair<AttributeType, float>> attrWeights =
                new List<KeyValuePair<AttributeType, float>>(profession.PrimaryAttributeWeights.ToList());
             attrWeights.AddRange(profession.SecondaryAttributeWeights.ToList());
-            foreach ((AttributeType type, float weight) in attrWeights)
+
+            var attrWeightsShuffled = from a in attrWeights
+                                      orderby random.Next()
+                                      select a;
+            foreach ((AttributeType type, float weight) in attrWeightsShuffled)
             {
                 CharacterAttribute attr = type.GetCharacterAttribute(character);
 
@@ -76,7 +81,11 @@ namespace rgcconsole
             List<KeyValuePair<Trait, float>> traitWeights = 
                 new List<KeyValuePair<Trait, float>>(profession.AdvantageWeights.ToList());
             traitWeights.AddRange(profession.DisadvantageWeights.ToList());
-            foreach ((Trait t, float weight) in traitWeights)
+
+            var traitWeightsShuffled = from t in traitWeights
+                                       orderby random.Next()
+                                       select t;
+            foreach ((Trait t, float weight) in traitWeightsShuffled)
             {
                 Normal normalDist = new Normal(weight, 0.015, random);
                 int pointsToSpend = (int)Math.Floor(normalDist.Sample() * pointTotal);
@@ -104,7 +113,10 @@ namespace rgcconsole
 
             // randomize the skills
             List<KeyValuePair<FantasyGameSkill, float>> skillWeights = new List<KeyValuePair<FantasyGameSkill, float>>(profession.SkillWeights.ToList());
-            foreach ((FantasyGameSkill skill, float weight) in skillWeights)
+            var skillsShuffled = from skill in skillWeights
+                                 orderby random.Next()
+                                 select skill;
+            foreach ((FantasyGameSkill skill, float weight) in skillsShuffled)
             {
                 Normal normalDist = new Normal(weight, 0.004, random);
                 int pointsToSpend = (int)Math.Floor(normalDist.Sample() * pointTotal);
